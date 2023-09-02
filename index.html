@@ -37,6 +37,14 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .info {
+            border: 1px solid #484848;
+            padding: 10px;
+            background-color: #363636;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -49,6 +57,13 @@
     <textarea id="outputArea" readonly></textarea>
 
     <button onclick="downloadCFG()">Download CFG</button>
+
+    <div class="info">
+        <h3>How to use with autoexec.cfg:</h3>
+        <p>Once you've downloaded the <code>longsay.cfg</code>, move it to your Counter-Strike cfg directory, typically found at: 
+        <code>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\cfg\</code>.</p>
+        <p>Open your <code>autoexec.cfg</code> (or create one if it doesn't exist) and add the line <code>exec longsay.cfg</code> and <code>bind "key" longsay</key></code> to the end of the file (replace "key" with the key you want. This will ensure that your longsay commands are loaded every time you start Counter-Strike</p>
+    </div>
 
     <script>
         document.getElementById('inputArea').addEventListener('input', generateLongSay);
@@ -70,7 +85,7 @@
             for (let line of lines) {
                 if (line.trim() === "") continue; // skip empty lines
                 line = sanitizeInput(line);
-                
+
                 aliasList.push(`alias l${aliasIndex} "say ${line}; alias longsay l${aliasIndex + 1};"`);
                 aliasIndex++;
             }
