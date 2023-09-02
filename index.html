@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter-Strike 2 Longsay Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #2E2E2E;
+            color: #A9A9A9;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            background-color: #363636;
+            color: #A9A9A9;
+            border: 1px solid #484848;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Counter-Strike 2 Longsay Generator</h2>
+    <p>Enter your lines:</p>
+    <textarea id="inputArea"></textarea>
+
+    <p>Generated LongSay Command:</p>
+    <textarea id="outputArea" readonly></textarea>
+
+    <button onclick="downloadCFG()">Download CFG</button>
+
+    <script>
+        document.getElementById('inputArea').addEventListener('input', generateLongSay);
+
+        function sanitizeInput(input) {
+            return input.replace(/[";]/g, '');
+        }
+
+        function generateLongSay() {
+            const inputArea = document.getElementById('inputArea');
+            const outputArea = document.getElementById('outputArea');
+            const lines = inputArea.value.split('\n');
+
+            let aliasList = [];
+            let aliasIndex = 1;
+
+            aliasList.push(`alias longsay "l${aliasIndex};"`);
+
+            for (let line of lines) {
+                if (line.trim() === "") continue; // skip empty lines
+                line = sanitizeInput(line);
+                
+                aliasList.push(`alias l${aliasIndex} "say ${line}; alias longsay l${aliasIndex + 1};"`);
+                aliasIndex++;
+            }
+
+            // Loop back to l1 after the last line
+            if (aliasList.length > 1) {
+                aliasList[aliasList.length - 1] = aliasList[aliasList.length - 1].replace(`l${aliasIndex};"`, 'l1;"');
+            }
+
+            outputArea.value = aliasList.join('\n');
+        }
+
+        function downloadCFG() {
+            const outputArea = document.getElementById('outputArea');
+            const blob = new Blob([outputArea.value], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'longsay.cfg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+
+</html>
